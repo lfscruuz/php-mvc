@@ -15,3 +15,4 @@ $obRouter->get('/',[
     }
 ]);
 
+$obRouter->run();
