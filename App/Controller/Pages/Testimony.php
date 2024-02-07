@@ -6,29 +6,24 @@
 
     Class Testimony extends Page{
         private static function getTestimonyItems(){
+            $itens = '';
             $results = EntityTestimony::getTestimonies(null, 'id DESC');
-            
-            // echo "<pre>";
-            // print_r($results);
-            // echo "</pre>";
-            // exit;
-            
-            
             while ($obTestimony = $results->fetchObject(EntityTestimony::class)) {
-                //$obtTestimony DEVERIA ser uma array, mas está retornando somente a última linha inserida na tabela. $results está fazendo a consulta correta, o problema está em fetch(object(EntityTestimony::class))
                 
-                // echo "<pre>";
-                // print_r($obTestimony);
-                // echo "</pre>";
-                // exit;
                 
-                $content = View::render("pages/testimony/item", [
+                //$itens está retornando apenas a ultima linha na tabela, todo o resto ok
+                $itens .= View::render("pages/testimony/item", [
                     'nome' => $obTestimony->nome,
                     'mensagem' => $obTestimony->mensagem,
                     'data' => date('d/m/Y H:i:s', strtotime($obTestimony->data))
                 ]);
+                
+                
+                // echo "<pre>";
+                // print_r($itens);
+                // echo "</pre>";
             }
-            return $content;
+            return  $itens;
         }
         public static function getTestimonies(){
 
