@@ -23,10 +23,7 @@ $obRouter->get('/depoimentos',[
 
 $obRouter->post('/depoimentos',[
     function($request){
-        echo "<pre>";
-        print_r($request);
-        echo '</pre>';
-        exit;
-        return new Response(201, Pages\Testimony::getTestimonies());
+        
+        return new Response(201, Pages\Testimony::insertTestimony($request));
     }
 ]);
