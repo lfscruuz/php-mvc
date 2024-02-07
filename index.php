@@ -3,8 +3,12 @@ require __DIR__.'/vendor/autoload.php';
 
 Use App\http\Router;
 Use App\Utils\view;
+use WilliamCosta\DotEnv\Environment;
 
-define('URL','http://localhost/mvc');
+Environment::load(__DIR__);
+
+
+define('URL',getenv('URL'));
 View::init([
     'URL' => URL
 ]);
