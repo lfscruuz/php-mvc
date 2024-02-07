@@ -3,6 +3,7 @@
 namespace App\http;
 use \Closure;
 use \Exception;
+use \ReflectionFunction;
 
 class Router{
     private $url = '';
@@ -30,18 +31,32 @@ class Router{
             }
         }
 
-        $patternRoute = "/^".str_replace("/", "\/", $route)."$/";
-        $this->routes[$patternRoute][$method] = $params;
+        $params['variables'] = [];
+        $patternVariable = '/{(.*?)}/';
 
-        // echo "<pre>";
-        // print_r($this);
-        // echo "</pre>";
-        // exit;
+        if (preg_match_all($patternVariable, $route, $matches)){
+            
+            $route = preg_replace($patternVariable, '(.*?)', $route);
+        }
+
+        $patternRoute = "/^".str_replace("/", "\/", $route)."$/";
+        $params['variables'] = $matches[1];
+        
+        $this->routes[$patternRoute][$method] = $params;
     }
     
     public function get($route, $params = []){
         return $this->addRoute('GET', $route, $params);
-    }
+    } 
+    public function post($route, $params = []){
+        return $this->addRoute('POST', $route, $params);
+    } 
+    public function put($route, $params = []){
+        return $this->addRoute('PUT', $route, $params);
+    } 
+    public function delete($route, $params = []){
+        return $this->addRoute('DELETE', $route, $params);
+    } 
     
     private function getUri(){
         $uri = $this->request->getUri();
@@ -53,25 +68,47 @@ class Router{
         $httpMethod = $this->request->getHttpMethod();
 
         foreach($this->routes as $patternRoute => $methods){
-            if(preg_match($patternRoute, $uri)){
-                if($methods[$httpMethod]){
+            if(preg_match($patternRoute, $uri, $matches)){
+                
+                //Dando um erro uncaught error: Warning: Undefined array key "GET" in C:\xampp\htdocs\mvc\App\Http\Router.php on line 68* além do Exception error
+                if(isset($methods[$httpMethod])){
+                    unset($matches[0]);
+
+                    $keys = $methods[$httpMethod]['variables'];
+                    $methods[$httpMethod]['variables'] = array_combine($keys, $matches);
+                    $methods[$httpMethod]['variables']['request'] = $this->request;
+                    
                     return $methods[$httpMethod];
+                } else{
+                    throw new Exception ("Método não permitido", 405);
                 }
             }
 
-            throw new Exception ("Método não permitido", 405);
         }
 
-        throw new Exception ("URL não encontrada",404);
+        throw new Exception ("URL não encontrada", 404);
     }
-
+    
     public function run(){
         try{
             $route = $this->getRoute();
-            echo "<pre>";
-            print_r($route);
-            echo "</pre>";
-            exit;
+            
+            if (!isset($route['controller'])){
+                throw new Exception ('A URL não pôde ser processada',500);
+            }
+            
+            $args = [];
+            $reflection = new ReflectionFunction($route['controller']);
+            foreach($reflection->getParameters() as $parameter){
+                $name = $parameter->getName();
+                $args[$name] = $route['variables'][$name] ?? '';
+                
+            }
+            // echo "<pre>";
+            // print_r($args);
+            // echo "</pre>";
+            // exit;
+            return call_user_func_array($route['controller'], $args);
         } catch (Exception $e){
             return new Response($e->getCode(), $e->getMessage());
         }

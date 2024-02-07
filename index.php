@@ -1,18 +1,16 @@
 <?php
-Require __DIR__.'/vendor/autoload.php';
+require __DIR__.'/vendor/autoload.php';
 
-use App\http\Response;
 Use App\http\Router;
-Use App\Controller\Pages\Home;
+Use App\Utils\view;
 
 define('URL','http://localhost/mvc');
+View::init([
+    'URL' => URL
+]);
 
 $obRouter = new Router(URL);
 
-$obRouter->get('/',[
-    function(){
-        return new Response(200, Home::getHome());
-    }
-]);
+include __DIR__.'/routes/pages.php';
 
-$obRouter->run();
+$obRouter->run()->sendResponse();

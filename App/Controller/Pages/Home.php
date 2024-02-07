@@ -9,10 +9,8 @@
             $obOrganization = new Organization();
             $content = View::render("pages/home", [
                 'name' => $obOrganization->name,
-                'description' => $obOrganization->description,
-                'site' => $obOrganization->site
             ]);
 
-            return parent::getPage('MVC - TESTE - PHP', $content);
+            return parent::getPage('HOME', $content);
         }
     }
