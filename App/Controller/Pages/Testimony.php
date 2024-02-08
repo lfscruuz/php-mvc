@@ -3,31 +3,25 @@
     Namespace App\Controller\Pages;
     use App\Utils\View;
     use App\Model\Entity\Testimony as EntityTestimony;
-    use WilliamCosta\DatabaseManager\Database;
+    use \WilliamCosta\DatabaseManager\Pagination;
 
     Class Testimony extends Page{
-        private static function getTestimonyItems($request){
+        private static function getTestimonyItems($request, &$obPagination){
             $itens = '';
             $quantidadeTotal = EntityTestimony::getTestimonies(null, null, null, 'COUNT(*) as qtd')->fetchObject()->qtd;
 
             $queryParams = $request->getQueryParams();
             $paginaAtual = $queryParams['page'] ?? 1;
             
-            //Classe que nunca foi apresentada antes?? acho que deveria estar inclusa em WilliamCosta\DatabaseManager\Database, mas não está encontrando...
-            $obPagination = new Pagination($quantidadeTotal. $paginaAtual, 1);
-
-            // echo "<pre>";
-            // print_r($paginaAtual);
-            // echo "</pre>";
-            // exit;
-
+            // $obPagination = new Pagination($quantidadeTotal. $paginaAtual, 1);
+            $obPagination = new Pagination($quantidadeTotal, $paginaAtual, 3);
+            // $results = EntityTestimony::getTestimonies(null, 'id DESC', $obPagination->getLimit());
             $results = EntityTestimony::getTestimonies(null, 'id DESC', $obPagination->getLimit());
+
+            
+            
             while ($obTestimony = $results->fetchObject(EntityTestimony::class)) {
                 
-                
-                //$itens está retornando apenas a ultima linha na tabela, todo o resto ok
-                //ERA .= PONTO IGUAL
-
                 $itens .= View::render("pages/testimony/item", [
                     'nome' => $obTestimony->nome,
                     'mensagem' => $obTestimony->mensagem,
@@ -41,7 +35,8 @@
         public static function getTestimonies($request){
 
             $content = View::render("pages/testimonies", [
-                'itens' => self::getTestimonyItems($request),
+                'itens' => self::getTestimonyItems($request, $obPagination),
+                'pagination' => parent::getPagination($request, $obPagination)
             ]);
 
             return parent::getPage('DEPOIMENTOS', $content);
