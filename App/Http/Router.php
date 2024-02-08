@@ -17,6 +17,19 @@ class Router{
         $this->url = $url;
         $this->setPrefix();
     }
+    
+    public function get($route, $params = []){
+        return $this->addRoute('GET', $route, $params);
+    } 
+    public function post($route, $params = []){
+        return $this->addRoute('POST', $route, $params);
+    } 
+    public function put($route, $params = []){
+        return $this->addRoute('PUT', $route, $params);
+    } 
+    public function delete($route, $params = []){
+        return $this->addRoute('DELETE', $route, $params);
+    } 
 
     private function setPrefix(){
         $parseUrl = parse_url($this->url);
@@ -47,19 +60,6 @@ class Router{
         
         $this->routes[$patternRoute][$method] = $params;
     }
-    
-    public function get($route, $params = []){
-        return $this->addRoute('GET', $route, $params);
-    } 
-    public function post($route, $params = []){
-        return $this->addRoute('POST', $route, $params);
-    } 
-    public function put($route, $params = []){
-        return $this->addRoute('PUT', $route, $params);
-    } 
-    public function delete($route, $params = []){
-        return $this->addRoute('DELETE', $route, $params);
-    } 
     
     private function getUri(){
         $uri = $this->request->getUri();
@@ -108,10 +108,6 @@ class Router{
                 
             }
             
-            // echo "<pre>";
-            // print_r($args);
-            // echo "</pre>";
-            // exit;
             
             return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args))->next($this->request);
         } catch (Exception $e){
@@ -121,6 +117,12 @@ class Router{
     
     public function getCurrentUrl(){
         return $this->url.$this->getUri();
+    }
+
+    public function redirect($route){
+        $url = $this->url.$route;
+        header('location: '.$url);
+        exit;
     }
 }
 
