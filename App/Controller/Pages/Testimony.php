@@ -12,6 +12,8 @@
                 
                 
                 //$itens está retornando apenas a ultima linha na tabela, todo o resto ok
+                //ERA .= PONTO IGUAL
+
                 $itens .= View::render("pages/testimony/item", [
                     'nome' => $obTestimony->nome,
                     'mensagem' => $obTestimony->mensagem,
