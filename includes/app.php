@@ -3,6 +3,7 @@
     Use App\Utils\view;
     use WilliamCosta\DotEnv\Environment;
     use WilliamCosta\DatabaseManager\Database;
+    use App\http\Middleware\Queue as MiddlewareQueue;
 
     Environment::load(__DIR__.'/../');
     Database::config(
@@ -16,4 +17,12 @@
     define('URL',getenv('URL'));
     View::init([
         'URL' => URL
+    ]);
+
+    MiddlewareQueue::setMap([
+        'maintenance' => \App\Http\Middleware\Maintenance::class,
+    ]);
+
+    MiddlewareQueue::setDefault([
+        'maintenance'
     ]);

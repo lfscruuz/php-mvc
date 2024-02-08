@@ -4,6 +4,7 @@ namespace App\http;
 use \Closure;
 use \Exception;
 use \ReflectionFunction;
+use App\http\Middleware\Queue as MiddlewareQueue;
 
 class Router{
     private $url = '';
@@ -31,14 +32,16 @@ class Router{
             }
         }
 
+        $params['middlewares'] = $params['middlewares'] ?? [];
+        
         $params['variables'] = [];
         $patternVariable = '/{(.*?)}/';
-
+        
         if (preg_match_all($patternVariable, $route, $matches)){
             
             $route = preg_replace($patternVariable, '(.*?)', $route);
         }
-
+        
         $patternRoute = "/^".str_replace("/", "\/", $route)."$/";
         $params['variables'] = $matches[1];
         
@@ -73,7 +76,7 @@ class Router{
                 //Dando um erro uncaught error: Warning: Undefined array key "GET" in C:\xampp\htdocs\mvc\App\Http\Router.php on line 68* além do Exception error
                 if(isset($methods[$httpMethod])){
                     unset($matches[0]);
-
+                    
                     $keys = $methods[$httpMethod]['variables'];
                     $methods[$httpMethod]['variables'] = array_combine($keys, $matches);
                     $methods[$httpMethod]['variables']['request'] = $this->request;
@@ -83,9 +86,9 @@ class Router{
                     throw new Exception ("Método não permitido", 405);
                 }
             }
-
+            
         }
-
+        
         throw new Exception ("URL não encontrada", 404);
     }
     
@@ -104,16 +107,18 @@ class Router{
                 $args[$name] = $route['variables'][$name] ?? '';
                 
             }
+            
             // echo "<pre>";
             // print_r($args);
             // echo "</pre>";
             // exit;
-            return call_user_func_array($route['controller'], $args);
+            
+            return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args))->next($this->request);
         } catch (Exception $e){
             return new Response($e->getCode(), $e->getMessage());
         }
     }
-
+    
     public function getCurrentUrl(){
         return $this->url.$this->getUri();
     }
