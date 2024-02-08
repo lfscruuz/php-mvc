@@ -3,7 +3,7 @@
         'name' => 'wdev/mvc',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '8b1e173659900a87e826d7256ebf12197b88a386',
+        'reference' => 'bcd23b8f89541b950da30d7633946742e2ae6e7d',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'wdev/mvc' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '8b1e173659900a87e826d7256ebf12197b88a386',
+            'reference' => 'bcd23b8f89541b950da30d7633946742e2ae6e7d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
