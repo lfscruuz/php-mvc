@@ -1,17 +1,16 @@
 <?php
     namespace App\Controller\Admin;
     use App\Model\Entity\User;
-    use App\Utils\view;
+    use App\Utils\View;
     use App\Session\Admin\login as SessionAdminLogin;
+    use App\Controller\Admin\Alert;
 
     class Login extends Page{
         public static function getLogin($request, $errorMessage = null){
 
-            $status = !is_null($errorMessage) ? view::render('admin/login/status', [
-                'mensagem' => $errorMessage
-            ]) : '';
+            $status = !is_null($errorMessage) ? Alert::getError($errorMessage) : '';
 
-            $content = view::render('admin/login', [
+            $content = View::render('admin/login', [
                 'status' => $status
             ]);
 
@@ -33,11 +32,6 @@
             }
             
             SessionAdminLogin::login($obUser);
-            
-            // echo "<pre>";
-            // print_r($_SESSION);
-            // echo "</pre>";
-            // exit;
             
             $request->getRouter()->redirect('/admin');
         }
