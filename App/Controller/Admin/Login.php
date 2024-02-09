@@ -41,4 +41,11 @@
             
             $request->getRouter()->redirect('/admin');
         }
+
+        public static function setLogout($request){
+            
+            SessionAdminLogin::logout();
+            
+            $request->getRouter()->redirect('/admin/login');
+        }
     }
