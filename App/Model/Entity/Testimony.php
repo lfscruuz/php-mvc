@@ -28,4 +28,11 @@ class Testimony{
     public static function getTestimonyById($id){
         return self::getTestimonies('id = '.$id)->fetchObject(self::class);
     }
+
+    public function atualizar(){
+        return (new Database('depoimentos'))->update('id = '.$this->id, [
+            'nome' => $this->nome,
+            'mensagem' => $this->mensagem
+        ]);
+    }
 }

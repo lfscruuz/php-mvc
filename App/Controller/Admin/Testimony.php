@@ -40,7 +40,9 @@
         
         public static function getNewTestimony($request){
             $content = View::render('admin/modules/testimonies/form',[
-                'title' => 'Cadastrar depoimento'
+                'title' => 'Cadastrar depoimento',
+                'nome' => '',
+                'mensagem' => ''
             ]);
             
             return parent::getPanel('Cadastrar depoimento', $content, 'testimony');
@@ -51,21 +53,25 @@
 
             $obTestimony = new EntityTestimony;
             $obTestimony->nome = $postVars['nome'] ?? '';
-            $obTestimony->mensagem = $postVars['nome'] ?? '';
+            $obTestimony->mensagem = $postVars['mensagem'] ?? '';
             $obTestimony->cadastrar();
 
             
-            $request->getRouter()->Redirect('/admin/testimony/'.$obTestimony->id.'/edit?status=created');
+            $request->getRouter()->Redirect('admin/testimony/'.$obTestimony->id.'/edit?status=created');
         }
 
         public static function getEditTestimony($request, $id){
             $obTestimony = EntityTestimony::getTestimonyById($id);
+            // print_r($obTestimony);
+            // exit;
             if(!$obTestimony instanceof EntityTestimony){
                 $request->getRouter()->redirect('/admin/testimonies');
             }
 
             $content = View::render('admin/modules/testimonies/form',[
-                'title' => 'Editar depoimento'
+                'title' => 'Editar depoimento',
+                'nome' => $obTestimony->nome,
+                'mensagem' => $obTestimony->mensagem
             ]);
             
             // echo "<pre>";
@@ -73,5 +79,21 @@
             // echo "</pre>"; exit;
 
             return parent::getPanel('Editar depoimento', $content, 'testimony');
+        }
+
+        public static function setEditTestimony($request, $id){
+            $obTestimony = EntityTestimony::getTestimonyById($id);
+            // print_r($obTestimony);
+            // exit;
+            if(!$obTestimony instanceof EntityTestimony){
+                $request->getRouter()->redirect('/admin/testimonies');
+            }
+
+            $postVars = $request->getPostVars();
+            $obTestimony->nome = $postVars['nome'] ?? $obTestimony->nome;
+            $obTestimony->mensagem = $postVars['mensagem'] ?? $obTestimony->mensagem;
+            $obTestimony->atualizar();
+
+            $request->getRouter()->Redirect('/admin/testimony/'.$obTestimony->id.'/edit?status=eupdated');
         }
     }
