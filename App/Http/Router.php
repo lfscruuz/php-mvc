@@ -70,10 +70,11 @@ class Router{
         $uri = $this->getUri();
         $httpMethod = $this->request->getHttpMethod();
 
+        
         foreach($this->routes as $patternRoute => $methods){
+            // print_r($methods);
+            // exit;
             if(preg_match($patternRoute, $uri, $matches)){
-                
-                //Dando um erro uncaught error: Warning: Undefined array key "GET" in C:\xampp\htdocs\mvc\App\Http\Router.php on line 68* além do Exception error
                 if(isset($methods[$httpMethod])){
                     unset($matches[0]);
                     

@@ -35,4 +35,8 @@ class Testimony{
             'mensagem' => $this->mensagem
         ]);
     }
+    
+    public function excluir(){
+        return (new Database('depoimentos'))->delete('id = '.$this->id);
+    }
 }
