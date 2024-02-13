@@ -24,4 +24,8 @@ class Testimony{
     public static function getTestimonies($where = null, $order = null, $limit = null, $fields = '*'){
         return (new Database('depoimentos'))->select($where, $order, $limit, $fields);
     }
+
+    public static function getTestimonyById($id){
+        return self::getTestimonies('id = '.$id)->fetchObject(self::class);
+    }
 }

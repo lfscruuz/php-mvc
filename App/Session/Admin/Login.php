@@ -26,4 +26,15 @@
             // echo "</pre>";
             // exit;
         }
+
+        public static function logout(){
+            self::init();
+
+            unset($_SESSION['admin']['usuario']);
+        }
+
+        public static function isLogged(){
+            self::init();
+            return isset($_SESSION['admin']['usuario']['id']);
+        }
     }

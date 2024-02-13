@@ -1,12 +1,18 @@
 <?php
     namespace App\Controller\Admin;
-    use App\Model\Entity\User;
-    use App\Utils\view;
+    use App\Utils\View;
 
-    class Status extends Page{
-        public static function getLogin($request){
-            $content = view::render('admin/login', []);
-
-            return parent::getPage('Login', $content);
+    class Alert{
+        public static function getError($message){
+            return View::render('admin/alert/status', [
+                'tipo' =>'danger',
+                'mensagem' =>$message
+            ]);
+        }
+        public static function getSuccess($message){
+            return View::render('admin/alert/status', [
+                'tipo' =>'success',
+                'mensagem' =>$message
+            ]);
         }
     }
