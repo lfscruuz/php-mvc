@@ -22,7 +22,9 @@
     MiddlewareQueue::setMap([
         'maintenance' => \App\Http\Middleware\Maintenance::class,
         'required-admin-logout' => App\http\Middleware\RequireAdminLogout::class,
-        'required-admin-login' => App\http\Middleware\RequireAdminLogin::class
+        'required-admin-login' => App\http\Middleware\RequireAdminLogin::class,
+        'api' => App\http\Middleware\Api::class,
+        'user-basic-auth' => App\http\Middleware\UserBasicAuth::class,
     ]);
 
     MiddlewareQueue::setDefault([

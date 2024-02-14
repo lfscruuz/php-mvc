@@ -11,6 +11,7 @@ class Router{
     private $prefix = '';
     private $routes = [];
     private $request;
+    private $contentType = 'text/html';
 
     public function __construct($url){
         $this->request = new Request($this);
@@ -18,6 +19,9 @@ class Router{
         $this->setPrefix();
     }
     
+    public function setContentType($contentType){
+        $this->contentType = $contentType;
+    }
     public function get($route, $params = []){
         return $this->addRoute('GET', $route, $params);
     } 
@@ -64,7 +68,7 @@ class Router{
     private function getUri(){
         $uri = $this->request->getUri();
         $xUri = strlen($this->prefix) ? explode($this->prefix, $uri) : [$uri];
-        return end($xUri);
+        return rtrim(end($xUri), '/');
     }
     private function getRoute(){
         $uri = $this->getUri();
@@ -112,7 +116,18 @@ class Router{
             
             return (new MiddlewareQueue($route['middlewares'], $route['controller'], $args))->next($this->request);
         } catch (Exception $e){
-            return new Response($e->getCode(), $e->getMessage());
+            return new Response($e->getCode(), $this->getErrorMessage($e->getMessage()), $this->contentType);
+        }
+    }
+
+    private function getErrorMessage($message){
+        switch ($this->contentType){
+            case 'application/json':
+                return [
+                    'error' => $message,
+                ];
+            default:
+                return $message;
         }
     }
     
